@@ -9,6 +9,7 @@
   --color-line: #dcd8cf;
   --color-warn: #b42318;
   --color-ok: #1f7a4d;
+  --color-revise: #b54708;
 }
 
 @theme inline {

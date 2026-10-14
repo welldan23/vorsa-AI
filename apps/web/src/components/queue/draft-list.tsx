@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { EmptyState } from "@/components/empty-state";
 import { DraftCard } from "@/components/queue/draft-card";
 import { isWeakEvidence, RUBRIC_LABELS } from "@/lib/format";
 import type { Draft, Rubric } from "@/lib/types";
@@ -44,12 +45,10 @@ export function DraftList({ drafts, now }: { drafts: Draft[]; now: string }) {
 
   if (drafts.length === 0) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-2xl font-extrabold tracking-tight">Antrean kosong.</p>
-        <p className="mt-2 text-sm text-muted">
-          Belum ada draf yang menunggu keputusan. Draf baru akan muncul di sini.
-        </p>
-      </div>
+      <EmptyState
+        title="Antrean bersih. Semua draf sudah diputuskan."
+        description="Sistem mengecek berita baru tiap 30 menit. Draf berikutnya akan muncul di sini begitu selesai ditulis dan didesain."
+      />
     );
   }
 
@@ -103,19 +102,23 @@ export function DraftList({ drafts, now }: { drafts: Draft[]; now: string }) {
       </div>
 
       {visible.length === 0 ? (
-        <div className="py-16 text-center">
-          <p className="text-lg font-extrabold tracking-tight">Tidak ada draf yang cocok.</p>
-          <button
-            type="button"
-            onClick={() => {
-              setRubric("all");
-              setDoubtfulOnly(false);
-            }}
-            className="mt-3 text-sm font-semibold text-accent underline underline-offset-4"
-          >
-            Hapus filter
-          </button>
-        </div>
+        <EmptyState
+          size="sm"
+          title="Tidak ada draf yang cocok dengan filter."
+          description="Coba pilih rubrik lain atau matikan filter meragukan."
+          action={
+            <button
+              type="button"
+              onClick={() => {
+                setRubric("all");
+                setDoubtfulOnly(false);
+              }}
+              className="rounded-full border border-ink px-4 py-2 text-sm font-semibold hover:bg-ink hover:text-paper"
+            >
+              Hapus filter
+            </button>
+          }
+        />
       ) : (
         <>
           {isFiltered && (

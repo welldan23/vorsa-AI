@@ -25,6 +25,7 @@ const MOCK_DRAFTS: MockDraft[] = [
     image_urls: [],
     slide_count: 1,
     status: "pending",
+    revision_note: null,
     version: 1,
     minutes_ago: 18,
   },
@@ -46,6 +47,7 @@ const MOCK_DRAFTS: MockDraft[] = [
     image_urls: [],
     slide_count: 1,
     status: "pending",
+    revision_note: null,
     version: 2,
     minutes_ago: 42,
   },
@@ -68,6 +70,7 @@ const MOCK_DRAFTS: MockDraft[] = [
     image_urls: [],
     slide_count: 5,
     status: "pending",
+    revision_note: null,
     version: 1,
     minutes_ago: 75,
   },
@@ -86,6 +89,7 @@ const MOCK_DRAFTS: MockDraft[] = [
     image_urls: [],
     slide_count: 1,
     status: "pending",
+    revision_note: null,
     version: 1,
     minutes_ago: 96,
   },
@@ -107,6 +111,7 @@ const MOCK_DRAFTS: MockDraft[] = [
     image_urls: [],
     slide_count: 1,
     status: "pending",
+    revision_note: null,
     version: 1,
     minutes_ago: 130,
   },
@@ -127,14 +132,28 @@ const MOCK_DRAFTS: MockDraft[] = [
     ],
     image_urls: [],
     slide_count: 1,
-    status: "pending",
+    status: "revision",
+    revision_note: "Tambahkan tanggal berlaku resmi dan rujuk langsung ke naskah peraturannya.",
     version: 3,
     minutes_ago: 190,
   },
 ];
 
+/**
+ * Skenario data tiruan untuk mencoba tampilan, dipilih lewat `?skenario=` di URL.
+ * - `normal`: antrean berisi beberapa draf (bawaan)
+ * - `kosong`: antrean kosong
+ */
+export type MockScenario = "normal" | "kosong";
+
+export function parseMockScenario(value: string | string[] | undefined): MockScenario {
+  return value === "kosong" ? "kosong" : "normal";
+}
+
 /** Bangun daftar draf tiruan dengan waktu relatif terhadap `now`. */
-export function buildMockPendingDrafts(now: Date): Draft[] {
+export function buildMockQueueDrafts(now: Date, scenario: MockScenario = "normal"): Draft[] {
+  if (scenario === "kosong") return [];
+
   return MOCK_DRAFTS.map(({ minutes_ago, ...draft }) => {
     const timestamp = new Date(now.getTime() - minutes_ago * 60_000).toISOString();
     return { ...draft, created_at: timestamp, updated_at: timestamp };

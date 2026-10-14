@@ -8,6 +8,11 @@ Untuk sementara data draf masih tiruan (`src/lib/mock/drafts.ts`) dan dibaca lew
 isi fungsi itu dengan panggilan API — bentuk datanya (`src/lib/types.ts`) sudah
 mengikuti kontrak JSON di PRD.
 
+Selama masih pakai data tiruan, tampilan lain bisa dicoba lewat URL:
+
+- `/` — antrean berisi draf (status menunggu & sedang direvisi)
+- `/?skenario=kosong` — antrean kosong
+
 ## Menjalankan
 
 ```bash

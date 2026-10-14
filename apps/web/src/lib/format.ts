@@ -1,4 +1,4 @@
-import type { DesignTemplate, Draft, Rubric } from "@/lib/types";
+import type { DesignTemplate, Draft, DraftStatus, Rubric } from "@/lib/types";
 
 const TIME_ZONE = "Asia/Jakarta";
 
@@ -18,6 +18,14 @@ export const TEMPLATE_LABELS: Record<DesignTemplate, string> = {
   tech: "Tech",
   business: "Business",
   tldr: "TL;DR",
+};
+
+export const STATUS_LABELS: Record<DraftStatus, string> = {
+  pending: "Menunggu",
+  revision: "Sedang direvisi",
+  approved: "Disetujui",
+  rejected: "Ditolak",
+  published: "Tayang",
 };
 
 /** Batas skor di bawah ini dianggap bukti lemah. */

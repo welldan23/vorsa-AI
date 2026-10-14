@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { ApprovalQueue } from "@/components/queue/approval-queue";
 import { ApprovalQueueSkeleton } from "@/components/queue/approval-queue-skeleton";
 
-export default function HomePage() {
+export default function HomePage({ searchParams }: PageProps<"/">) {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <header className="mb-4">
@@ -16,7 +16,7 @@ export default function HomePage() {
       </header>
 
       <Suspense fallback={<ApprovalQueueSkeleton />}>
-        <ApprovalQueue />
+        <ApprovalQueue searchParams={searchParams} />
       </Suspense>
     </main>
   );

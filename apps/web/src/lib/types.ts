@@ -25,6 +25,9 @@ export type DraftStatus =
   | "rejected"
   | "published";
 
+/** Status yang masih tampil di antrean editor. */
+export const QUEUE_STATUSES = ["pending", "revision"] as const satisfies readonly DraftStatus[];
+
 export interface DraftSource {
   name: string;
   url: string;
@@ -48,6 +51,8 @@ export interface Draft {
   /** Jumlah slide (1 untuk feed biasa). */
   slide_count: number;
   status: DraftStatus;
+  /** Catatan revisi terakhir dari editor (terisi saat status `revision`). */
+  revision_note: string | null;
   /** Naik tiap kali isi draf berubah; dipakai untuk membatalkan persetujuan lama. */
   version: number;
   created_at: string;
