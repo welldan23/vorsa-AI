@@ -1,7 +1,7 @@
-import { formatPercent, LOW_CONFIDENCE_THRESHOLD } from "@/lib/format";
+import { formatPercent, isWeakEvidence } from "@/lib/format";
 
 export function ConfidenceBadge({ score, doubtful }: { score: number; doubtful: boolean }) {
-  const weak = doubtful || score < LOW_CONFIDENCE_THRESHOLD;
+  const weak = isWeakEvidence({ is_doubtful: doubtful, confidence_score: score });
 
   return (
     <span

@@ -1,4 +1,4 @@
-import type { DesignTemplate, Rubric } from "@/lib/types";
+import type { DesignTemplate, Draft, Rubric } from "@/lib/types";
 
 const TIME_ZONE = "Asia/Jakarta";
 
@@ -22,6 +22,11 @@ export const TEMPLATE_LABELS: Record<DesignTemplate, string> = {
 
 /** Batas skor di bawah ini dianggap bukti lemah. */
 export const LOW_CONFIDENCE_THRESHOLD = 0.6;
+
+/** Draf dianggap meragukan bila ditandai riset atau skornya di bawah ambang. */
+export function isWeakEvidence(draft: Pick<Draft, "is_doubtful" | "confidence_score">): boolean {
+  return draft.is_doubtful || draft.confidence_score < LOW_CONFIDENCE_THRESHOLD;
+}
 
 export function formatTime(iso: string): string {
   return new Intl.DateTimeFormat("id-ID", {

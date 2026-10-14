@@ -1,14 +1,12 @@
-import { DraftCard } from "@/components/queue/draft-card";
+import { DraftList } from "@/components/queue/draft-list";
 import { getPendingDrafts } from "@/lib/drafts";
-import { formatLongDate, formatPercent, LOW_CONFIDENCE_THRESHOLD } from "@/lib/format";
+import { formatLongDate, formatPercent, isWeakEvidence } from "@/lib/format";
 
 export async function ApprovalQueue() {
   const drafts = await getPendingDrafts();
   const now = new Date();
 
-  const doubtfulCount = drafts.filter(
-    (d) => d.is_doubtful || d.confidence_score < LOW_CONFIDENCE_THRESHOLD,
-  ).length;
+  const doubtfulCount = drafts.filter(isWeakEvidence).length;
   const averageConfidence =
     drafts.length > 0
       ? drafts.reduce((sum, d) => sum + d.confidence_score, 0) / drafts.length
@@ -33,20 +31,7 @@ export async function ApprovalQueue() {
         />
       </dl>
 
-      {drafts.length === 0 ? (
-        <div className="py-20 text-center">
-          <p className="text-2xl font-extrabold tracking-tight">Antrean kosong.</p>
-          <p className="mt-2 text-sm text-muted">
-            Belum ada draf yang menunggu keputusan. Draf baru akan muncul di sini.
-          </p>
-        </div>
-      ) : (
-        <section aria-label="Daftar draf menunggu" className="mt-2">
-          {drafts.map((draft) => (
-            <DraftCard key={draft.draft_id} draft={draft} now={now} />
-          ))}
-        </section>
-      )}
+      <DraftList drafts={drafts} now={now.toISOString()} />
     </>
   );
 }
