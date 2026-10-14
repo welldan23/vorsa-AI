@@ -4,11 +4,26 @@ import { StatusBadge } from "@/components/queue/status-badge";
 import { formatTime, formatWaitingTime, RUBRIC_LABELS, TEMPLATE_LABELS } from "@/lib/format";
 import type { Draft } from "@/lib/types";
 
-export function DraftCard({ draft, now }: { draft: Draft; now: Date }) {
+export function DraftCard({
+  draft,
+  now,
+  selected = false,
+  onSelect,
+}: {
+  draft: Draft;
+  now: Date;
+  selected?: boolean;
+  onSelect?: () => void;
+}) {
   const inRevision = draft.status === "revision";
 
   return (
-    <article className="grid grid-cols-[96px_1fr] gap-4 border-b border-line py-5 sm:grid-cols-[132px_1fr] sm:gap-6">
+    <article
+      className={`relative -mx-3 grid grid-cols-[96px_1fr] gap-4 rounded-sm border-b border-line px-3 py-5 transition-colors sm:grid-cols-[132px_1fr] sm:gap-6 ${
+        selected ? "bg-ink/[0.04]" : onSelect ? "hover:bg-ink/[0.02]" : ""
+      }`}
+    >
+      {selected && <span aria-hidden className="absolute top-5 bottom-5 left-0 w-0.5 bg-accent" />}
       <div className={inRevision ? "opacity-50 grayscale" : undefined}>
         <DraftThumbnail draft={draft} />
       </div>
@@ -22,7 +37,19 @@ export function DraftCard({ draft, now }: { draft: Draft; now: Date }) {
         </div>
 
         <h2 className="text-lg leading-snug font-extrabold tracking-tight text-balance sm:text-xl">
-          {draft.headline}
+          {onSelect ? (
+            // Area klik direntangkan ke seluruh kartu lewat pseudo-element.
+            <button
+              type="button"
+              onClick={onSelect}
+              aria-expanded={selected}
+              className="text-left after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-accent"
+            >
+              {draft.headline}
+            </button>
+          ) : (
+            draft.headline
+          )}
         </h2>
 
         <p className="line-clamp-2 text-sm leading-relaxed text-ink/75">{draft.caption}</p>

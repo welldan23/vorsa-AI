@@ -4,7 +4,7 @@ UI editor VORSA AI Newsroom (Next.js 16 + Tailwind CSS 4). Halaman utama `/`
 adalah **Antrean Persetujuan**: daftar draf yang menunggu keputusan editor.
 
 Untuk sementara data draf masih tiruan (`src/lib/mock/drafts.ts`) dan dibaca lewat
-`getPendingDrafts()` di `src/lib/drafts.ts`. Saat backend FastAPI siap, cukup ganti
+`getQueueDrafts()` di `src/lib/drafts.ts`. Saat backend FastAPI siap, cukup ganti
 isi fungsi itu dengan panggilan API — bentuk datanya (`src/lib/types.ts`) sudah
 mengikuti kontrak JSON di PRD.
 
