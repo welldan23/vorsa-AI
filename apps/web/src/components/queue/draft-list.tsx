@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { EmptyState } from "@/components/empty-state";
 import { DraftPreviewPanel } from "@/components/preview/draft-preview-panel";
@@ -23,6 +23,8 @@ const SORTERS: Record<SortKey, (a: Draft, b: Draft) => number> = {
 };
 
 const RUBRICS = Object.keys(RUBRIC_LABELS) as Rubric[];
+
+const cardDomId = (draftId: string) => `draf-${draftId}`;
 
 /**
  * Daftar draf menunggu keputusan, lengkap dengan filter rubrik, filter
@@ -48,6 +50,17 @@ export function DraftList({ drafts, now }: { drafts: Draft[]; now: string }) {
     [drafts, rubric, doubtfulOnly, sort],
   );
 
+  const panelRef = useRef<HTMLElement>(null);
+
+  // Saat pindah draf: panel pratinjau kembali ke atas, dan kartunya terlihat di daftar.
+  useEffect(() => {
+    if (!selectedId) return;
+    panelRef.current?.scrollTo({ top: 0 });
+    document
+      .getElementById(cardDomId(selectedId))
+      ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [selectedId]);
+
   if (drafts.length === 0) {
     return (
       <EmptyState
@@ -58,6 +71,15 @@ export function DraftList({ drafts, now }: { drafts: Draft[]; now: string }) {
   }
 
   const countByRubric = (r: Rubric) => drafts.filter((d) => d.rubric === r).length;
+
+  // Navigasi antar draf mengikuti urutan & filter yang sedang aktif. Bila draf
+  // yang dibuka tersembunyi oleh filter, posisinya tidak diketahui (-1).
+  const selectedIndex = selected ? visible.findIndex((d) => d.draft_id === selected.draft_id) : -1;
+  const prevDraft = selectedIndex > 0 ? visible[selectedIndex - 1] : undefined;
+  const nextDraft =
+    selectedIndex >= 0 && selectedIndex < visible.length - 1
+      ? visible[selectedIndex + 1]
+      : undefined;
   const isFiltered = rubric !== "all" || doubtfulOnly;
 
   return (
@@ -134,7 +156,7 @@ export function DraftList({ drafts, now }: { drafts: Draft[]; now: string }) {
             )}
             <ul>
               {visible.map((draft) => (
-                <li key={draft.draft_id}>
+                <li key={draft.draft_id} id={cardDomId(draft.draft_id)} className="scroll-my-6">
                   <DraftCard
                     draft={draft}
                     now={nowDate}
@@ -150,13 +172,25 @@ export function DraftList({ drafts, now }: { drafts: Draft[]; now: string }) {
 
       {/* Desktop: panel menempel di kanan. HP: panel jadi layar penuh saat draf dipilih. */}
       <aside
+        ref={panelRef}
         aria-label="Pratinjau draf"
         className={`${
           selected ? "fixed inset-0 z-50 block overflow-y-auto bg-paper p-4 sm:p-6" : "hidden"
         } lg:sticky lg:top-6 lg:z-auto lg:block lg:max-h-[calc(100vh-3rem)] lg:self-start lg:overflow-y-auto lg:p-0 lg:pt-4`}
       >
         {selected ? (
-          <DraftPreviewPanel key={selected.draft_id} draft={selected} onClose={closePreview} />
+          <DraftPreviewPanel
+            key={selected.draft_id}
+            draft={selected}
+            onClose={closePreview}
+            navigation={{
+              position: selectedIndex >= 0 ? selectedIndex + 1 : null,
+              total: visible.length,
+              prev: prevDraft,
+              next: nextDraft,
+              onSelect: setSelectedId,
+            }}
+          />
         ) : (
           <div className="flex aspect-[4/5] flex-col items-center justify-center rounded-sm border border-dashed border-line p-8 text-center">
             <p className="text-lg font-extrabold tracking-tight">Pilih draf untuk pratinjau.</p>
